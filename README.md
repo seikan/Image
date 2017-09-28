@@ -1,6 +1,6 @@
 # Image
 
-This is a very simple PHP image editing library. It required GD library enable to work. Examples in this documentation will use the following photo I took in Japan.
+This is a very simple PHP image editing library. It required GD library to work. Examples in this documentation will use the following photo I took in Japan.
 
 ![example](https://user-images.githubusercontent.com/73107/30966237-d694854c-a48a-11e7-8b01-2592932bb269.jpg)
 
