@@ -10,7 +10,7 @@ This is a very simple PHP image editing library. It required GD library to work.
 
 ### Getting Started
 
-> \$image= new Image( );
+> \$image = new Image( );
 
 ```php
 // Include core Image library
@@ -38,7 +38,7 @@ $image->open('example.jpg');
 
 Saved image to a location when finish editing. Default output format is JPG with 75% compression level.
 
-> **bool** \$image->save( **string** \$output, **string** $imageType\[, **int** \$compression\] );
+> **bool** \$image->save( **string** \$output\[, **string** $imageType = IMAGETYPE_JPEG\]\[, **int** \$compression = 75\] );
 
 ```php
 // Save image as output.png
@@ -51,7 +51,7 @@ $image->save('output.png', 'png');
 
 Displays image directly to browser without saving it to a local directory. Image will show as JPG by default.
 
-> \$image->show(\[**string** $imageType\]\[, **bool** \$showHeader\]);
+> \$image->show(\[**string** $imageType = IMAGETYPE_JPEG\]\[, **bool** \$showHeader = true\]);
 
 ```php
 $image->show();
@@ -229,7 +229,7 @@ $image->resize(200, 150);
 
 Crops image to a specified width and height.
 
-> \$image->crop(**int** \$width, **int** \$height\[, **int** \$top\]\[, **int** \$left\]);
+> \$image->crop(**int** \$width, **int** \$height\[, **int** \$top = 0\]\[, **int** \$left = 0\]);
 
 ```php
 $image->crop(300, 300, 0, 0);
@@ -245,7 +245,7 @@ $image->crop(300, 300, 0, 0);
 
 Crops image to perfect position with specified width and height.
 
-> \$image->smartCrop(**int** \$width, **int** \$height\[, **string** \$position\]);
+> \$image->smartCrop(**int** \$width, **int** \$height\[, **string** \$position = "topLeft"\]);
 
 Available cropping position: `topLeft`, `topCenter`, `topRight`, `middleLeft`, `center`, `middleRight`, `botomLeft`, `bottomCenter`, `bottomRight`.
 
@@ -263,7 +263,7 @@ $image->smartCrop(300, 300, 'center');
 
 Adds watermark to the image. Default watermark will be added at bottom right.
 
-> \$image->addWatermark(**string** $watermarkImage\[, **string** \$position\]);
+> \$image->addWatermark(**string** $watermarkImage\[, **string** \$position = "bottomRight"\]);
 
 Available position: `topLeft`, `topCenter`, `topRight`, `middleLeft`, `center`, `middleRight`, `botomLeft`, `bottomCenter`, `bottomRight`.
 
