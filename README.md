@@ -229,10 +229,20 @@ $image->resize(200, 150);
 
 Crops image to a specified width and height.
 
-> \$image->crop(**int** \$width, **int** \$height\[, **int** \$top = 0\]\[, **int** \$left = 0\]);
+> \$image->crop(**int** \$width, **int** \$height\[, **string** \$position = 'center'\]);
+
+**Available Position:**
+
+`topLeft` `topCenter` `topRight` 
+
+`middleLeft` `center` `middleRight`
+
+`bottomLeft` `bottomCenter` `bottomRight`
+
+`int x, int y`
 
 ```php
-$image->crop(300, 300, 0, 0);
+$image->crop(300, 300, 'topLeft');
 ```
 
 **Result:**
@@ -241,21 +251,29 @@ $image->crop(300, 300, 0, 0);
 
 
 
-### Smart Crop
+### Add Text
 
-Crops image to perfect position with specified width and height.
+Adds text to the image. Default text position is bottom right.
 
-> \$image->smartCrop(**int** \$width, **int** \$height\[, **string** \$position = "topLeft"\]);
+> \$image->addText(**string** $text, **string** \$font, **int** \$font_size, **string** \$font_color\[, **string** \$position = "bottomRight"\]\[, **int** \$margin  = 10\]);
 
-Available cropping position: `topLeft`, `topCenter`, `topRight`, `middleLeft`, `center`, `middleRight`, `botomLeft`, `bottomCenter`, `bottomRight`.
+**Available Position:**
+
+`topLeft` `topCenter` `topRight` 
+
+`middleLeft` `center` `middleRight`
+
+`bottomLeft` `bottomCenter` `bottomRight`
+
+`int x, int y`
 
 ```php
-$image->smartCrop(300, 300, 'center');
+$image->addText('example.com', 'arial.ttf', 12, '#FFFFFF');
 ```
 
- **Result:**
+**Result:**
 
-![example](https://user-images.githubusercontent.com/73107/30970338-7f611580-a497-11e7-8658-98c3e2866de3.jpg)
+![example](https://user-images.githubusercontent.com/73107/31067972-507ec05c-a788-11e7-80d0-e51b7d39f7ba.jpg)
 
 
 
@@ -263,9 +281,17 @@ $image->smartCrop(300, 300, 'center');
 
 Adds watermark to the image. Default watermark will be added at bottom right.
 
-> \$image->addWatermark(**string** $watermarkImage\[, **string** \$position = "bottomRight"\]);
+> \$image->addWatermark(**string** $watermarkImage\[, **string** \$position = "bottomRight"\]\[, **int** \$margin  = 10\]);
 
-Available position: `topLeft`, `topCenter`, `topRight`, `middleLeft`, `center`, `middleRight`, `botomLeft`, `bottomCenter`, `bottomRight`.
+**Available Position:**
+
+`topLeft` `topCenter` `topRight` 
+
+`middleLeft` `center` `middleRight`
+
+`bottomLeft` `bottomCenter` `bottomRight`
+
+`int x, int y`
 
 ```php
 $image->addWatermark('watermark.png');

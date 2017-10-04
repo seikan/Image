@@ -17,8 +17,7 @@ $image->open('example.jpg');
 
 // Scale image to 20%
 $image->scale(50);
- $image->show();
-die;
+
 // Save edited image as GIF
 //$image->save('edited.gif', 'gif');
 
@@ -39,9 +38,14 @@ die;
 // $image->show();
 
 // Crop perfectly by position
-$image->smartCrop(600, 300, 'center');
+// $image->smartCrop(600, 300, 'center');
 // $image->show();
 
 // Add watermark
-$image->addWatermark('watermark.png', 'bottomRight');
+//$image->addWatermark('watermark.png', 'bottomRight');
+
+// Add text
+$image->addText('example.com', 'arial.ttf', 18, '#ffffff', 'bottomRight');
+
+// Display the image in browser
 $image->show();

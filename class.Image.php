@@ -214,6 +214,7 @@ class Image
 	public function hex2rgb($hex)
 	{
 		list($r, $g, $b) = array_map('hexdec', str_split(ltrim($hex, '#'), 2));
+
 		return [
 			'r' => $r, 'g' => $g, 'b' => $b,
 		];
@@ -289,77 +290,23 @@ class Image
 	}
 
 	/**
-	 * Crop image by position in better way.
+	 * Crop image by position provided.
 	 *
 	 * @param int    $width
 	 * @param int    $height
 	 * @param string $position
+	 *
+	 * @throws \Exception
 	 */
-	public function smartCrop($width, $height, $position = 'topLeft')
+	public function crop($width, $height, $position = 'center')
 	{
-		$top = 0;
-		$left = 0;
-
-		$width = ($width > $this->getWidth()) ? $this->getWidth() : $width;
-		$height = ($height > $this->getHeight()) ? $this->getHeight() : $height;
-
-		switch ($position) {
-			case 'topCenter':
-			case 2:
-				$left = ($this->getWidth() - $width) / 2;
-			break;
-
-			case 'topRight':
-			case 3:
-				$left = $this->getWidth() - $width;
-			break;
-
-			case 'middleLeft':
-			case 4:
-				$top = ($this->getHeight() - $height) / 2;
-			break;
-
-			case 'center':
-			case 5:
-				$top = ($this->getHeight() - $height) / 2;
-				$left = ($this->getWidth() - $width) / 2;
-			break;
-
-			case 'middleRight': case 6:
-				$top = ($this->getHeight() - $height) / 2;
-				$left = $this->getWidth() - $width;
-			break;
-
-			case 'bottomLeft': case 7:
-				$top = $this->getHeight() - $height;
-			break;
-
-			case 'bottomCenter': case 8:
-				$top = $this->getHeight() - $height;
-				$left = ($this->getWidth() - $width) / 2;
-			break;
-
-			case 'bottomRight': case 9:
-				$top = $this->getHeight() - $height;
-				$left = $this->getWidth() - $width;
-			break;
+		if ($width > $this->getWidth()) {
+			throw new Exception('Crop width exceeded image width.');
 		}
 
-		$this->crop($width, $height, $top, $left);
-	}
-
-	/**
-	 * Crop image by position provided.
-	 *
-	 * @param int $width
-	 * @param int $height
-	 * @param int $top
-	 * @param int $left
-	 */
-	public function crop($width, $height, $top = 0, $left = 0)
-	{
-		$top = (($top + $height) > $this->getHeight()) ? ($this->getHeight() - $height) : $top;
-		$left = (($left + $width) > $this->getWidth()) ? ($this->getWidth() - $width) : $left;
+		if ($height > $this->getHeight()) {
+			throw new Exception('Crop height exceeded image height.');
+		}
 
 		$image = imagecreatetruecolor($width, $height);
 
@@ -370,7 +317,9 @@ class Image
 			imagefilledrectangle($image, 0, 0, $width, $height, $transparent);
 		}
 
-		imagecopy($image, $this->image, 0, 0, $left, $top, $width, $height);
+		$topLeft = $this->getPosition($width, $height, $position);
+
+		imagecopy($image, $this->image, 0, 0, $topLeft['left'], $topLeft['top'], $width, $height);
 		$this->image = $image;
 	}
 
@@ -379,15 +328,14 @@ class Image
 	 *
 	 * @param string $watermarkImage
 	 * @param string $position
+	 * @param int    $margin
 	 */
-	public function addWatermark($watermarkImage, $position = 'bottomRight')
+	public function addWatermark($watermarkImage, $position = 'bottomRight', $margin = 10)
 	{
 		if (!file_exists($watermarkImage)) {
 			throw new Exception('Watermark image "'.$watermarkImage.'" does not exist.');
 		}
 
-		$top = 0;
-		$left = 0;
 		$data = getimagesize($watermarkImage);
 		$imageType = $data[2];
 
@@ -412,6 +360,86 @@ class Image
 		}
 
 		list($width, $height) = getimagesize($watermarkImage);
+
+		$topLeft = $this->getPosition($width, $height, $position);
+
+		if (0 == $topLeft['top']) {
+			$topLeft['top'] += $margin;
+		}
+
+		if (($topLeft['top'] + $height) >= $this->getHeight()) {
+			$topLeft['top'] -= $margin;
+		}
+
+		if (0 == $topLeft['left']) {
+			$topLeft['left'] += $margin;
+		}
+
+		if (($topLeft['left'] + $width) >= $this->getHeight()) {
+			$topLeft['left'] -= $margin;
+		}
+
+		imagecopy($this->image, $watermark, $topLeft['left'], $topLeft['top'], 0, 0, $width, $height);
+	}
+
+	/**
+	 * Add text existing image.
+	 *
+	 * @param string $text
+	 * @param string $font
+	 * @param int    $size
+	 * @param string $color
+	 * @param string $position
+	 * @param int    $margin
+	 *
+	 * @throws \Exception
+	 */
+	public function addText($text, $font, $size = 12, $color = '000000', $position = 'bottomRight', $margin = 10)
+	{
+		if (!file_exists($font)) {
+			throw new Exception('Font "'.$font.'" not found.');
+		}
+
+		$rgb = $this->hex2rgb(trim($color, '#'));
+
+		$box = imagettfbbox($size, 0, $font, $text);
+		$width = abs($box[4] - $box[0]);
+		$height = abs($box[5] - $box[1]);
+
+		if ($width > $this->getWidth()) {
+			throw new Exception('Text length exceeded image width.');
+		}
+
+		if ($height > $this->getHeight()) {
+			throw new Exception('Text length exceeded image height.');
+		}
+
+		$topLeft = $this->getPosition($width, $height, $position);
+
+		if (0 == $topLeft['top']) {
+			$topLeft['top'] = $height;
+		}
+
+		if ($topLeft['left'] + $width >= $this->getWidth()) {
+			$topLeft['left'] -= $margin;
+		}
+
+		imagettftext($this->image, $size, 0, $topLeft['left'], $topLeft['top'], imagecolorallocate($this->image, $rgb['r'], $rgb['g'], $rgb['b']), $font, $text);
+	}
+
+	/**
+	 * Get position.
+	 *
+	 * @param int    $width
+	 * @param int    $height
+	 * @param string $position
+	 *
+	 * @return array
+	 */
+	private function getPosition($width, $height, $position = 'center')
+	{
+		$top = 0;
+		$left = 0;
 
 		switch ($position) {
 			case 'topCenter':
@@ -457,8 +485,16 @@ class Image
 				$top = $this->getHeight() - $height;
 				$left = $this->getWidth() - $width;
 			break;
+
+			default:
+				if (preg_match('/^(\d+),\s*(\d+)$/', $position, $matches)) {
+					$top = $matches[1];
+					$left = $matches[2];
+				}
 		}
 
-		imagecopy($this->image, $watermark, $left - 10, $top - 10, 0, 0, $width, $height);
+		return [
+			'top' => $top, 'left' => $left,
+		];
 	}
 }
