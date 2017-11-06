@@ -56,14 +56,14 @@ class Image
 	 *
 	 * @param string $imagePath
 	 *
-	 * @return bool
-	 *
 	 * @throws \Exception
+	 *
+	 * @return bool
 	 */
 	public function open($imagePath)
 	{
 		if (!file_exists($imagePath)) {
-			throw new Exception('Not able to open image "'.$imagePath.'".');
+			throw new Exception('Not able to open image "' . $imagePath . '".');
 		}
 
 		$data = getimagesize($imagePath);
@@ -98,6 +98,7 @@ class Image
 	 * @param string $ouput
 	 * @param string $imageType
 	 * @param int    $compression
+	 * @param mixed  $output
 	 */
 	public function save($output, $imageType = IMAGETYPE_JPEG, $compression = 75)
 	{
@@ -201,7 +202,7 @@ class Image
 	{
 		$color = imagecolorsforindex($this->image, imagecolorat($this->image, $x, $y));
 
-		return dechex($color['red'] & 240).dechex($color['red'] & 240).dechex($color['red'] & 240);
+		return dechex($color['red'] & 240) . dechex($color['red'] & 240) . dechex($color['red'] & 240);
 	}
 
 	/**
@@ -231,7 +232,7 @@ class Image
 	 */
 	public function rgb2hex($r, $g, $b)
 	{
-		return str_pad(dechex($r), 2, '0', STR_PAD_LEFT).str_pad(dechex($g), 2, '0', STR_PAD_LEFT).str_pad(dechex($b), 2, '0', STR_PAD_LEFT);
+		return str_pad(dechex($r), 2, '0', STR_PAD_LEFT) . str_pad(dechex($g), 2, '0', STR_PAD_LEFT) . str_pad(dechex($b), 2, '0', STR_PAD_LEFT);
 	}
 
 	/**
@@ -333,7 +334,7 @@ class Image
 	public function addWatermark($watermarkImage, $position = 'bottomRight', $margin = 10)
 	{
 		if (!file_exists($watermarkImage)) {
-			throw new Exception('Watermark image "'.$watermarkImage.'" does not exist.');
+			throw new Exception('Watermark image "' . $watermarkImage . '" does not exist.');
 		}
 
 		$data = getimagesize($watermarkImage);
@@ -354,7 +355,7 @@ class Image
 			break;
 
 			default:
-				$this->errors[] = 'Invalid watermark image type "'.$this->imageType.'".';
+				$this->errors[] = 'Invalid watermark image type "' . $this->imageType . '".';
 
 				return false;
 		}
@@ -397,7 +398,7 @@ class Image
 	public function addText($text, $font, $size = 12, $color = '000000', $position = 'bottomRight', $margin = 10)
 	{
 		if (!file_exists($font)) {
-			throw new Exception('Font "'.$font.'" not found.');
+			throw new Exception('Font "' . $font . '" not found.');
 		}
 
 		$rgb = $this->hex2rgb(trim($color, '#'));
