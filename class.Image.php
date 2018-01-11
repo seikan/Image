@@ -279,7 +279,7 @@ class Image
 	{
 		$image = imagecreatetruecolor($width, $height);
 
-		if (IMAGETYPE_GIF == $this->imageType || IMAGETYPE_PNG == $this->imageType) {
+		if ($this->imageType == IMAGETYPE_GIF || $this->imageType == IMAGETYPE_PNG) {
 			imagealphablending($image, false);
 			imagesavealpha($image, true);
 			$transparent = imagecolorallocatealpha($image, 255, 255, 255, 127);
@@ -311,7 +311,7 @@ class Image
 
 		$image = imagecreatetruecolor($width, $height);
 
-		if (IMAGETYPE_GIF == $this->imageType || IMAGETYPE_PNG == $this->imageType) {
+		if ($this->imageType == IMAGETYPE_GIF || $this->imageType == IMAGETYPE_PNG) {
 			imagealphablending($image, false);
 			imagesavealpha($image, true);
 			$transparent = imagecolorallocatealpha($image, 255, 255, 255, 127);
@@ -364,19 +364,19 @@ class Image
 
 		$topLeft = $this->getPosition($width, $height, $position);
 
-		if (0 == $topLeft['top']) {
+		if ($topLeft['top'] == 0) {
 			$topLeft['top'] += $margin;
 		}
 
-		if (($topLeft['top'] + $height) >= $this->getHeight()) {
+		if ($this->getHeight() <= ($topLeft['top'] + $height)) {
 			$topLeft['top'] -= $margin;
 		}
 
-		if (0 == $topLeft['left']) {
+		if ($topLeft['left'] == 0) {
 			$topLeft['left'] += $margin;
 		}
 
-		if (($topLeft['left'] + $width) >= $this->getHeight()) {
+		if ($this->getHeight() <= ($topLeft['left'] + $width)) {
 			$topLeft['left'] -= $margin;
 		}
 
@@ -417,11 +417,11 @@ class Image
 
 		$topLeft = $this->getPosition($width, $height, $position);
 
-		if (0 == $topLeft['top']) {
+		if ($topLeft['top'] == 0) {
 			$topLeft['top'] = $height;
 		}
 
-		if ($topLeft['left'] + $width >= $this->getWidth()) {
+		if ($this->getWidth() <= $topLeft['left'] + $width) {
 			$topLeft['left'] -= $margin;
 		}
 
